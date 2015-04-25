@@ -24,76 +24,6 @@ He might be impatient to approach to voters,but I can't tell if he has common se
 He should have looked around where he was...
 `.split('\n');
 
-var parts = ['+', '-', '+', 'f', 'f', '+', '-','-','+','-','-','+','f'];
-
-var temp = [];
-function isChange(part) {
-  return part !== 'f';
-}
-function makeGroup(part) {
-  temp.push({
-    isChange: isChange(part),
-    items: []
-  });
-}
-parts.forEach((part, i) => {
-  if (!temp.length) makeGroup(part);
-  var group = temp[temp.length-1];
-  if (isChange(part) === group.isChange) {
-    group.items.push(part)
-  } else {
-    makeGroup(part);
-    temp[temp.length-1].items.push(part);
-  }
-});
-temp = temp.map(function (section) {
-  if (!section.isChange) return section.items;
-  return section.items.sort();
-});
-var merged = [];
-merged = merged.concat.apply(merged, temp);
-
-function diffSort(parts) {
-  var temp = [];
-  function isChange(part) {
-    return part.added || part.removed;
-  }
-  function makeGroup(part) {
-    temp.push({
-      isChange: isChange(part),
-      items: []
-    });
-  }
-  console.log(parts.map(part => part.value));
-  parts = parts.filter((part, i) => {
-    if (part.value === ' ' && parts[i-1]) {
-      parts[i-1] = parts[i-1].value += ' ';
-      return false;
-    } else {
-      return true;
-    }
-  });
-  parts.forEach((part, i) => {
-    if (!temp.length) makeGroup(part);
-    var group = temp[temp.length-1];
-    if (isChange(part) === group.isChange) {
-      group.items.push(part)
-    } else {
-      makeGroup(part);
-      temp[temp.length-1].items.push(part);
-    }
-  });
-  temp = temp.map(function (section) {
-    if (!section.isChange) return section.items;
-    return section.items.sort(function (a, b) {
-      // Check this
-      return a.removed === b.removed ? -1 : 1;
-    });
-  });
-  parts = [];
-  return parts.concat.apply(parts, temp);
-}
-
 var Editor = React.createClass({
   medium: null,
   getDefaultProps: function () {
@@ -132,7 +62,6 @@ var Editor = React.createClass({
   },
   getDiff: function () {
     var parts = diff.diffWords(this.props.originalText, this.state.currentText);
-    parts = diffSort(parts);
     return <ul className="diff">{parts.map(this.makeLi)}</ul>;
   },
   onChange: function (e) {
