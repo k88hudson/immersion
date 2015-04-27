@@ -13,16 +13,21 @@ var lines = [
   ['幸せになりたいよ！', '母を幸せにしたいです！']
 ];
 
+var js = `カナダでは、今年の母の日は５月１０日です。
+母の日に日本人と同様にカナダ人がも母にプレゼントをあげます。
+そして、カードも書きます/添えます。レストランで食べたり、家で料理を作ったりすることもあります。
+去年、私の家族はイタリアのレストランへ行きました。
+パスタを食べました。ワインレッドを飲みました。
+とても美味しかったです！
+なので, 母の日に私は綺麗なプレゼントをあげたいです、一番美味しい料理をしたいです。
+母を幸せにしたいです！`.split('\n');
 
-var en = `Election is comming tomorrow.
-I'm going to go to nearby middle school from my place where I vote.
-The more election day approach, the more candidates show up around station.
-They are repeating their name again and again using a loudspeaker, so it's pretty noisy until election is finished.
-Also it can be dangerous sometimes.
-The other day, there was a candidate trying to shake hands with people who were just about to get on escalator of station! What if they fall into escalator...
-He might be impatient to approach to voters,but I can't tell if he has common sence.
-He should have looked around where he was...
-`.split('\n');
+var en = `This year, Mother's Day is on May 10th in Canada.
+Like Japanese people, Canadians also give presents to their mothers on Mother's day.
+They also write cards to their mothers, and sometimes go out to a restaurant to eat or make dinner.
+Last year, I went to an Italian restaurant with my family.
+We ate pasta and drank red wine. It was really delicious!`.split('\n');
+
 
 var Editor = React.createClass({
   medium: null,
@@ -33,7 +38,8 @@ var Editor = React.createClass({
   },
   getInitialState: function () {
     return {
-      currentText: ''
+      currentText: '',
+      isEditing: false
     };
   },
   componentWillMount: function () {
@@ -44,10 +50,12 @@ var Editor = React.createClass({
   componentDidMount: function () {
     this.medium = new Medium({
       element: this.refs.editor.getDOMNode(),
-      mode: Medium.partialMode,
+      mode: Medium.inlineMode,
       placeholder: this.props.placeholder,
-      beforeInsertHtml: function (e) {
-        console.log(e, this);
+      keyContext: {
+        enter: function (e, element) {
+          element.blur();
+        }
       }
     });
   },
@@ -65,15 +73,37 @@ var Editor = React.createClass({
     return <ul className="diff">{parts.map(this.makeLi)}</ul>;
   },
   onChange: function (e) {
-    console.log(this.medium.value());
     this.setState({
       currentText: this.medium.value()
     });
   },
+  getSelectionRange: function() {
+    var selection;
+    if (window.getSelection) {
+      selection = window.getSelection();
+      if (selection.rangeCount) {
+        return selection.getRangeAt(0);
+      }
+    } else if (document.selection) {
+      return document.selection.createRange();
+    }
+    return null;
+  },
+  onClick: function () {
+    var range = this.getSelectionRange();
+    console.log(range);
+  },
+  showEditor: function(show) {
+    return () => {
+      this.setState({
+        isEditing: show
+      });
+    };
+  },
   render: function () {
-    return (<div>
-      <div ref="editor" onKeyUp={this.onChange}>{this.props.originalText}</div>
-      <div>{this.getDiff()}</div>
+    return (<div className="line-container">
+      <div className="line-editor" ref="editor" onClick={this.onClick} onKeyUp={this.onChange} onBlur={this.showEditor(false)}>{this.props.originalText}</div>
+      <div className="line">{this.getDiff()}</div>
     </div>);
   }
 });
@@ -101,62 +131,15 @@ var Eg = React.createClass({
   render: function () {
     var removedLabel = this.state.showRemoved ? 'Hide Removed' : 'Show Removed';
     var className = this.state.showRemoved ? '' : 'removed-off';
+    // <button onClick={this.toggleRemoved}>{removedLabel}</button>
+    // {lines.map(this.makeLine)}
     return (<div className={className}>
       <img src="./img/mother.jpg" />
-      <h3>In your country, what do you do on Mothers Day?</h3>
-      <p>In Canada, most people give their mother a present.</p>
-      {en.map(line => <Editor originalText={line} />)}
-      <button onClick={this.toggleRemoved}>{removedLabel}</button>
-      {lines.map(this.makeLine)}
+      <h3>Mother&rsquo;s Day</h3>
+      {en.map((line, i) => <Editor key={i} originalText={line} />)}
     </div>);
   }
 });
 
-var skills = [
-  {
-    name: 'Fuckover Shooting +10',
-    minRank: 4,
-    class: 'Monk'
-  },
-  {
-    name: 'Sing like an Angel',
-    minRank: 3,
-    class: 'Bard'
-  }
-];
-
-var Jbuck = React.createClass({
-  getInitialState: function() {
-    return {
-      rank: 0,
-      class: ''
-    };
-  },
-  buildLi: function (item) {
-    var className = 'hide';
-    if ((!this.state.rank || this.state.rank >= item.minRank) && (!this.state.class || item.class.toLowerCase().match(this.state.class.toLowerCase()))) className = '';
-    return <tr className={className}><td>{item.name}</td><td>{item.class}</td><td>{item.minRank}</td></tr>;
-  },
-  setRank: function () {
-    this.setState({rank: parseInt(event.target.value, 10)});
-  },
-  setClass: function () {
-    this.setState({class: event.target.value});
-  },
-  render: function () {
-    return (<div>
-      <input type="number" value={this.state.rank} onKeyUp={this.setRank} onChange={this.setRank} />
-      <input type="text" value={this.state.class} onKeyUp={this.setClass} onChange={this.setClass} />
-      <table>
-        <thead>
-          <th>Skill</th>
-          <th>Class</th>
-          <th>Min Rank</th>
-        </thead>
-        {skills.map(this.buildLi)}
-      </table>
-    </div>);
-  }
-});
 
 React.render(<div><Eg /></div>, document.getElementById('app'));

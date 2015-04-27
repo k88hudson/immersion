@@ -1,0 +1,125 @@
+@import 'fonts';
+@import 'normalize';
+ body {
+  font-family: 'Danton', sans-serif;
+  font-size: 22px;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.7;
+  padding: 10px;
+  color: #333538;
+}
+
+input {
+  font-size: inherit;
+}
+ul {
+  margin: 0;
+  padding: 0;
+}
+.diff li {
+  display: inline;
+}
+.removed {
+  opacity: 0.2;
+  text-decoration: line-through;
+}
+.removed-off .removed {
+  display: none;
+}
+.added {
+  color: #52B75C;
+}
+ruby {
+  margin-right: 0.3em;
+}
+img {
+  display: block;
+  width: 100%;
+  max-width: 450px;
+}
+h3 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 32px;
+}
+
+/*********************************************************
+* Line editor
+*/
+.Medium {
+  position: relative;
+  min-height: 10px;
+  margin-top: 0;
+}
+.Medium-clear {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+.Medium p {
+  &::first-child {
+    margin-top: 0;
+  }
+  &::last-child {
+    margin-bottom: 0;
+  }
+  &::empty {
+    display: block;
+    height: 1em;
+  }
+}
+.Medium-paste-hook {
+  position: absolute;
+  opacity: 0;
+}
+.Medium-placeholder {
+  position: absolute;
+  div {
+    opacity: 0.5;
+    position: absolute;
+  }
+}
+.Medium-placeholder-rich div {
+  font-style: italic;
+}
+.Medium-inline, .Medium-placeholder-inline div{
+  // In this case, we want to wrap to the next line.
+  // overflow: hidden;
+  // white-space: nowrap;
+}
+
+.line,
+.line-editor {
+  transition: opacity 0.2s ease;
+}
+
+.line-editor {
+  opacity: 0;
+  box-shadow: 0 0 2px 0 darken(#F0CC3B, 10%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  &:focus {
+    background: #FFF6C4;
+    outline: none;
+  }
+}
+.Medium-placeholder {
+  opacity: 0;
+}
+.line-container {
+  position: relative;
+  margin-bottom: 1em;
+  &:hover .line-editor,
+  .line-editor:focus,
+  &:hover .Medium-placeholder {
+    opacity: 1;
+    z-index: 2;
+  }
+  &:hover .line,
+  .line-editor:focus+.line {
+    opacity: 0;
+  }
+}
