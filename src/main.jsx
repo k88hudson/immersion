@@ -22,11 +22,11 @@ var js = `カナダでは、今年の母の日は５月１０日です。
 なので, 母の日に私は綺麗なプレゼントをあげたいです、一番美味しい料理をしたいです。
 母を幸せにしたいです！`.split('\n');
 
-var en = `This year, Mother's Day is on May 10th in Canada.
-Like Japanese people, Canadians also give presents to their mothers on Mother's day.
-They also write cards to their mothers, and sometimes go out to a restaurant to eat or make dinner.
-Last year, I went to an Italian restaurant with my family.
-We ate pasta and drank red wine. It was really delicious!`.split('\n');
+var en = `This year, Mother Day is on May 10th in Canada.
+Like Japanese peoples, Canadians also to give presents to their mothers on Mother's day.
+They also writing cards to their mothers, and sometimes go out to a restaurant to eat or make dinner.
+Last year, I went to Italian restaurant with my family.
+We eat pasta and drank red wine. It was really delicious!`.split('\n');
 
 
 var Editor = React.createClass({
